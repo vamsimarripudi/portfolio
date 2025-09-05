@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Automated Test",
+    "email": "test@example.com",
+    "siteType": "responsive",
+    "budget": "500",
+    "description": "Automated test submission from assistant.",
+    "via": "db",
+    "ts": 175647608364
+    
+  }
+]
