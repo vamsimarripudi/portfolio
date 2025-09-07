@@ -1,21 +1,36 @@
-import './App.css'
-import Header from './components/Header'
-import Hero from './components/Hero'
-import Projects from './components/Projects'
-import Contact from './components/Contact'
 
+// Import global styles
+import './App.css';
+
+// Import main components
+import Header from './portfolio/src/components/Header';
+import Hero from './portfolio/src/components/Hero';
+import Projects from './portfolio/src/components/Projects';
+import Contact from './portfolio/src/components/Contact';
+
+// Main App component
 function App() {
+  // Get the current year for the footer
+  const currentYear = new Date().getFullYear();
+
   return (
     <div className="site-root">
+      {/* Site header with navigation */}
       <Header />
+
+      {/* Main content area */}
       <main>
         <Hero />
         <Projects />
         <Contact />
       </main>
-      <footer className="site-footer">© {new Date().getFullYear()} Vamsi Marripudi — Built with React & Vite</footer>
+
+      {/* Footer with copyright info */}
+      <footer className="site-footer">
+        &copy; {currentYear} Vamsi Marripudi &mdash; Built with React & Vite
+      </footer>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
