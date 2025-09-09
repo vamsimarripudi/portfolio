@@ -1,3 +1,4 @@
+// Moved to to_delete for cleanup
 <svg width="320" height="320" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect width="160" height="160" rx="20" fill="url(#g)"/>
   <defs>

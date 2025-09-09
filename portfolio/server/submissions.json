@@ -1,5 +1,86 @@
 [
   {
+    "name": "vamsi marripudi",
+    "email": "vamsimarripudi409@gmail.com",
+    "siteType": "Responsive",
+    "budget": "40002",
+    "description": "sdifngisnfgnwwerg",
+    "via": "db",
+    "ts": 1757401239713
+  },
+  {
+    "name": "Manohar",
+    "email": "manudarling52@gmail.com",
+    "siteType": "responsive",
+    "budget": "1000",
+    "description": "I want a static website for my portfolio.",
+    "via": "db",
+    "ts": 1757388902624
+  },
+  {
+    "name": "Manohar",
+    "email": "satishmanohar7@gmain.com",
+    "siteType": "Responsive",
+    "budget": "1500",
+    "description": "I want a website for my glass powder business.",
+    "via": "db",
+    "ts": 1757388793956
+  },
+  {
+    "name": "Manohar",
+    "email": "vamsimarripudi409@gmail.com",
+    "siteType": "Responsive",
+    "budget": "1240",
+    "description": "I want test the form. Yes if u receive this message it is working.",
+    "via": "db",
+    "ts": 1757089640174
+  },
+  {
+    "name": "Vamsi Marripudi",
+    "email": "vamsimarripudi409@gmail.com",
+    "siteType": "Responsive",
+    "budget": "12000",
+    "description": "Navmasfsd",
+    "via": "db",
+    "ts": 1757052542137
+  },
+  {
+    "name": "Vamsi Marripudi",
+    "email": "vamsimarripudi409@gmail.com",
+    "siteType": "Responsive",
+    "budget": "2500",
+    "description": "Automatic testing function dont worry it  s just a test.",
+    "via": "db",
+    "ts": 1757050879802
+  },
+  {
+    "name": "Vamsi Marripudi",
+    "email": "vamsimarripudi409@gmail.com",
+    "siteType": "Dynamic",
+    "budget": "1000",
+    "description": "Redirect to the one.",
+    "via": "db",
+    "ts": 1757050571097
+  },
+  {
+    "name": "Frontend Demo",
+    "email": "demo@example.com",
+    "siteType": "business",
+    "budget": "1500",
+    "description": "Demo submission via simulated frontend contact form.",
+    "via": "db",
+    "ts": 1757050236946
+  },
+  {
+    "name": "Test User",
+    "email": "testuser@example.com",
+    "siteType": "portfolio",
+    "budget": "500",
+    "description": "This is a test submission from Copilot.",
+    "via": "db",
+    "ts": 1757050153570
+  },
+  {
     "name": "Automated Test",
     "email": "test@example.com",
     "siteType": "responsive",
@@ -7,6 +88,5 @@
     "description": "Automated test submission from assistant.",
     "via": "db",
     "ts": 175647608364
-    
   }
 ]

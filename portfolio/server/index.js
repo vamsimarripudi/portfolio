@@ -23,6 +23,12 @@ app.use(cors())
 app.use(express.json())
 app.use(cookieParser())
 
+// Serve /server/index.css with correct MIME type
+app.get('/server/index.css', (req, res) => {
+  res.setHeader('Content-Type', 'text/css');
+  res.sendFile(path.join(__dirname, 'index.css'));
+});
+
 // simple file logger
 function logToFile(line){
   try{
@@ -131,89 +137,25 @@ app.post('/logout', (req, res) => {
 app.get('/login', (req, res) => {
   const html = `<!doctype html>
   <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Login</title>
-    <style>
-      html,body{height:100%}
-      body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:#0b0c10}
-      .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center}
-      .modal{width:min(92vw, 380px);background:#111318;border:1px solid #242837;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.45);padding:20px 20px 16px;color:#e8eaf0}
-      .title{margin:0 0 12px 0;font-size:20px;font-weight:700;letter-spacing:.2px}
-      .desc{margin:0 0 16px 0;color:#9aa0b4;font-size:13px}
-      .row{display:flex;gap:8px}
-      .input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid #2b3042;background:#0f1117;color:#e8eaf0;outline:none}
-      .input:focus{border-color:#3a71ff;box-shadow:0 0 0 3px rgba(58,113,255,.15)}
-      .btn{padding:10px 14px;border-radius:10px;border:0;background:#3a71ff;color:#fff;font-weight:600;cursor:pointer}
-      .btn:disabled{opacity:.7;cursor:not-allowed}
-      .msg{margin-top:10px;height:18px;color:#ff6b6b;font-size:13px}
-      .footer{margin-top:12px;color:#7c8399;font-size:12px;text-align:center}
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-ZQqU9uEw5bRk4oSxkq0m1M9k7kZ6q1v2D6q5i2v7oQ0g2S3bUu7q8mXlFJ8yXo5uIh3gU1mOq1R1O8E0m2m8xw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  </head>
-  <body>
-    <div class="backdrop" id="backdrop" aria-modal="true" role="dialog">
-      <div class="modal" id="modal">
-        <h1 class="title">Admin Login</h1>
-        <p class="desc">Enter your ADMIN_KEY to view submissions.</p>
-        <form id="f" autocomplete="off">
-          <div class="row">
-            <input id="key" name="key" class="input" placeholder="ADMIN_KEY" aria-label="Admin key" />
-            <button id="loginBtn" class="btn" type="submit">Login</button>
-          </div>
-          <div id="msg" class="msg"></div>
-        </form>
-        <div class="footer">Your key is stored in a secure HttpOnly cookie.</div>
-      </div>
-    </div>
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Login</title></head>
+  <body style="font-family:system-ui,Arial;margin:24px">
+    <h1>Admin Login</h1>
+    <form id="f">
+      <input id="key" name="key" placeholder="ADMIN_KEY" style="padding:8px;width:320px" />
+      <button type="submit" style="padding:8px 12px;margin-left:8px">Login</button>
+    </form>
+    <div id="msg" style="margin-top:12px;color:#a00"></div>
     <script>
-      const modal = document.getElementById('modal');
-      const backdrop = document.getElementById('backdrop');
-      const msgEl = document.getElementById('msg');
-      const keyEl = document.getElementById('key');
-      const btnEl = document.getElementById('loginBtn');
-
-      // Entrance animation
-      gsap.set(backdrop, { opacity: 0 });
-      gsap.set(modal, { opacity: 0, y: 12, scale: 0.96 });
-      gsap.to(backdrop, { opacity: 1, duration: 0.25, ease: 'power1.out' });
-      gsap.to(modal, { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power2.out', delay: 0.05 });
-
-      function setBusy(b){ btnEl.disabled = b; keyEl.disabled = b; }
-
       document.getElementById('f').addEventListener('submit', async (e)=>{
         e.preventDefault();
-        const key = keyEl.value.trim();
-        msgEl.textContent = '';
-        if(!key){
-          msgEl.textContent = 'Please enter your ADMIN_KEY';
-          gsap.fromTo(modal, { x: -6 }, { x: 0, duration: 0.35, ease: 'elastic.out(1, 0.4)', keyframes:[{x:-8},{x:8},{x:-6},{x:6},{x:0}] });
-          return;
-        }
+        const key = document.getElementById('key').value;
         try{
-          setBusy(true);
           const r = await fetch('/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ key }), credentials: 'same-origin' });
-          if(!r.ok){
-            throw new Error('Unauthorized');
-          }
-          // Success: animate out then redirect
-          await Promise.all([
-            gsap.to(modal, { opacity: 0, y: -10, scale: 0.98, duration: 0.25, ease: 'power1.in' }).then(()=>{}),
-            gsap.to(backdrop, { opacity: 0, duration: 0.25, ease: 'power1.in' }).then(()=>{})
-          ]);
+          if(!r.ok) throw new Error('Login failed');
+          // on success, go to responses
           location.href = '/responses';
-        }catch(err){
-          msgEl.textContent = 'Login failed. Check your ADMIN_KEY.';
-          // Shake animation on error
-          gsap.fromTo(modal, { x: -10 }, { x: 0, duration: 0.3, ease: 'power2.out', keyframes:[{x:-10},{x:10},{x:-8},{x:8},{x:-4},{x:4},{x:0}] });
-        }finally{
-          setBusy(false);
-        }
-      });
-
-      // Focus input on open
-      keyEl.focus();
+        }catch(err){ document.getElementById('msg').innerText = err.message }
+      })
     </script>
   </body>
   </html>`
@@ -229,65 +171,72 @@ app.get('/responses', (req, res) => {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Submissions</title>
-    <style>
-      body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:24px;background:#f7f7f9}
-      .card{background:#fff;border:1px solid #e2e2e8;padding:16px;margin-bottom:12px;border-radius:8px}
-      .meta{font-size:12px;color:#666;margin-bottom:8px}
-      .desc{white-space:pre-wrap}
-    </style>
+  <link rel="stylesheet" href="/server/index.css" />
   </head>
   <body>
     <h1>Saved Submissions</h1>
-    <div id="list">Loading…</div>
+    <div id="list"><div id="spinner" class="spinner"></div></div>
+    <div class="submissions-container" id="submissions"></div>
     <script>
-      // Use server-side HttpOnly cookie: call POST /login to set cookie
       async function load(){
-        // build a tiny login UI
-        const loginDiv = document.createElement('div')
-        loginDiv.style.marginBottom = '12px'
-        loginDiv.innerHTML = '<input id="keyInput" placeholder="ADMIN_KEY" style="padding:8px;margin-right:8px" /><button id="loginBtn">Login</button><button id="logoutBtn" style="margin-left:8px">Logout</button>'
-        document.getElementById('list').appendChild(loginDiv)
-        document.getElementById('loginBtn').addEventListener('click', async ()=>{
-          const key = document.getElementById('keyInput').value
-          if(!key) return alert('Enter key')
-          try{
-            const r = await fetch('/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ key }) })
-            if(!r.ok) throw new Error('Unauthorized')
-            // success: reload to fetch submissions using cookie
-            location.reload()
-          }catch(err){ alert('Login failed: '+err.message) }
-        })
-        document.getElementById('logoutBtn').addEventListener('click', async ()=>{
-          try{ await fetch('/logout', { method: 'POST' }) }catch(e){}
-          location.reload()
-        })
-
-        // now try to fetch submissions (cookie will be sent automatically)
+        document.getElementById('spinner').style.display = 'block';
+        let authorized = false;
+        let submissions = [];
         try{
-          const r = await fetch('/api/submissions')
-          if(r.status === 401) { document.getElementById('list').innerHTML = '<i>Unauthorized — please login above</i>'; return }
-          if(!r.ok) throw new Error('Failed to load')
-          const j = await r.json()
-          const list = j.submissions || []
-          if(list.length===0) { document.getElementById('list').innerHTML = '<i>No submissions</i>'; return }
-          // render results
-          document.getElementById('list').innerHTML = ''
-          const ctrl2 = document.createElement('div')
-          ctrl2.style.marginBottom = '12px'
-          ctrl2.innerHTML = '<button id="logout2">Logout</button>'
-          document.getElementById('list').appendChild(ctrl2)
-          document.getElementById('logout2').addEventListener('click', async ()=>{ try{ await fetch('/logout',{ method:'POST' }) }catch(e){}; location.reload() })
-          list.forEach(s => {
-            const div = document.createElement('div')
-            div.className = 'card'
-            const meta = new Date(s.ts).toLocaleString() + ' — ' + s.name + ' <' + s.email + '> — ' + s.siteType + ' — $' + s.budget
-            const desc = (s.description||'').replace(/</g,'&lt;')
-            div.innerHTML = '<div class="meta">' + meta + '</div><div class="desc">' + desc + '</div>'
-            document.getElementById('list').appendChild(div)
-          })
-        }catch(err){ document.getElementById('list').innerText = 'Failed to load: '+err.message }
+          const r = await fetch('/api/submissions');
+          if(r.status === 401) {
+            authorized = false;
+          } else if(r.ok) {
+            authorized = true;
+            const j = await r.json();
+            submissions = j.submissions || [];
+          }
+        }catch(e){ authorized = false; }
+        document.getElementById('spinner').style.display = 'none';
+
+        if(!authorized){
+          const loginDiv = document.createElement('div');
+          loginDiv.style.marginBottom = '12px';
+          loginDiv.innerHTML = '<input id="keyInput" placeholder="ADMIN_KEY" style="padding:8px;margin-right:8px" /><button id="loginBtn" class="button">Login</button>';
+          document.getElementById('list').appendChild(loginDiv);
+          document.getElementById('loginBtn').addEventListener('click', async ()=>{
+            const key = document.getElementById('keyInput').value;
+            if(!key) return alert('Enter key');
+            try{
+              const r = await fetch('/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ key }) });
+              if(!r.ok) throw new Error('Unauthorized');
+              location.reload();
+            }catch(err){ alert('Login failed: '+err.message); }
+          });
+        }else{
+          document.getElementById('list').innerHTML = '';
+          const ctrl2 = document.createElement('div');
+          ctrl2.style.marginBottom = '12px';
+          ctrl2.innerHTML = '<button id="logout2" class="logout-button">Logout</button>';
+          document.getElementById('list').appendChild(ctrl2);
+          document.getElementById('logout2').addEventListener('click', async ()=>{ try{ await fetch('/logout',{ method:'POST' }) }catch(e){}; location.reload(); });
+          const submissionsContainer = document.getElementById('submissions');
+          submissionsContainer.innerHTML = '';
+          if(submissions.length===0){
+            submissionsContainer.innerHTML = '<i>No submissions</i>';
+            return;
+          }
+          submissions.forEach(s => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.innerHTML =
+              '<h3 class="card-title">Submission</h3>' +
+              '<div class="card-row"><span class="card-label">👤 Name:</span> ' + s.name + '</div>' +
+              '<div class="card-row"><span class="card-label">✉️ Email:</span> ' + s.email + '</div>' +
+              '<div class="card-row"><span class="card-label">🌐 Type:</span> ' + s.siteType + '</div>' +
+              '<div class="card-row"><span class="card-label">💰 Budget:</span> $' + s.budget + '</div>' +
+              '<div class="card-row"><span class="card-label">📝 Description:</span> <span class="card-desc">' + (s.description||'').replace(/</g,'&lt;') + '</span></div>' +
+              '<div class="card-meta"><span class="card-label">⏰ Submitted:</span> ' + new Date(s.ts).toLocaleString() + '</div>';
+            submissionsContainer.appendChild(div);
+          });
+        }
       }
-      load()
+      load();
     </script>
   </body>
   </html>`
