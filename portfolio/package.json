@@ -12,6 +12,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "browserslist": "^4.25.4",
+    "caniuse-lite": "^1.0.30001741",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "gsap": "^3.12.0",
