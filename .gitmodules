@@ -1,0 +1,4 @@
+# Example .gitmodules file
+[submodule "portfolio/src"]
+	path = portfolio/src
+	url = <REPLACE_WITH_REPO_URL>
